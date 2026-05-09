@@ -278,6 +278,7 @@ typedef enum {
     DIALOG_INSTANCE_FONT_PICKER,     /**< System font picker */
     DIALOG_INSTANCE_UPDATE_ERROR,    /**< Update error dialog */
     DIALOG_INSTANCE_CLI_HELP,        /**< CLI help dialog */
+    DIALOG_INSTANCE_ALARM,           /**< Alarm configuration dialog */
     DIALOG_INSTANCE_COUNT
 } DialogInstanceType;
 

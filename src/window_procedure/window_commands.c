@@ -37,6 +37,8 @@ extern void HandleStartupMode(HWND hwnd);
 #include "tray/tray_menu_font.h"
 #include "menu_preview.h"
 #include "dialog/dialog_font_picker.h"
+#include "alarm/alarm.h"
+#include "dialog/dialog_alarm.h"
 #include "../resource/resource.h"
 #include "color/color_parser.h"
 #include <shlobj.h>
@@ -459,6 +461,30 @@ static LRESULT CmdResetDefaults(HWND hwnd, WPARAM wp, LPARAM lp) {
 }
 
 /* ============================================================================
+ * Alarm Command Handlers
+ * ============================================================================ */
+
+static LRESULT CmdAlarmAdd(HWND hwnd, WPARAM wp, LPARAM lp) {
+    (void)wp; (void)lp;
+    ShowAlarmDialog(hwnd, -1);  /* -1 = add new alarm */
+    return 0;
+}
+
+static LRESULT CmdAlarmClearAll(HWND hwnd, WPARAM wp, LPARAM lp) {
+    (void)wp; (void)lp;
+    ClearAllAlarms();
+    return 0;
+}
+
+static BOOL HandleAlarmToggle(HWND hwnd, UINT cmd, int index) {
+    (void)cmd;
+    if (index >= 0 && index < g_AppConfig.alarm.count) {
+        ToggleAlarm(index);
+    }
+    return TRUE;
+}
+
+/* ============================================================================
  * Command Dispatch Table
  * ============================================================================ */
 
@@ -528,7 +554,11 @@ static const CommandDispatchEntry COMMAND_DISPATCH_TABLE[] = {
     {CLOCK_IDM_HELP, CmdHelp},
     {CLOCK_IDM_SUPPORT, CmdSupport},
     {CLOCK_IDM_FEEDBACK, CmdFeedback},
-    
+
+    /* Alarm */
+    {CLOCK_IDM_ALARM_ADD, CmdAlarmAdd},
+    {CLOCK_IDM_ALARM_CLEAR_ALL, CmdAlarmClearAll},
+
     {0, NULL}
 };
 
@@ -640,6 +670,7 @@ BOOL DispatchRangeCommand(HWND hwnd, UINT cmd, WPARAM wp, LPARAM lp) {
         {CLOCK_IDM_RECENT_FILE_1, CLOCK_IDM_RECENT_FILE_5, HandleRecentFile},
         {CMD_POMODORO_TIME_BASE, CMD_POMODORO_TIME_END, HandlePomodoroTime},
         {CMD_FONT_SELECTION_BASE, CMD_FONT_SELECTION_END - 1, HandleFontSelection},
+        {CLOCK_IDM_ALARM_BASE, CLOCK_IDM_ALARM_END, HandleAlarmToggle},
         {0, 0, NULL}
     };
 

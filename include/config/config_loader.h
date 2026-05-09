@@ -73,6 +73,15 @@ typedef struct {
     int pomodoroTimes[10];
     int pomodoroTimesCount;
     int pomodoroLoopCount;
+
+    /* Alarm */
+    int alarmHour[MAX_ALARMS];
+    int alarmMinute[MAX_ALARMS];
+    BOOL alarmEnabled[MAX_ALARMS];
+    BOOL alarmRecurring[MAX_ALARMS];
+    char alarmDays[MAX_ALARMS][16];
+    char alarmMessage[MAX_ALARMS][100];
+    int alarmCount;
     
     /* Notifications */
     char timeoutMessage[100];

@@ -14,6 +14,7 @@
 #include "config/config_applier.h"
 #include "config/config_writer.h"
 #include "timer/timer.h"
+#include "alarm/alarm.h"
 #include "log.h"
 #include <stdio.h>
 #include <string.h>
@@ -239,6 +240,9 @@ void ReadConfig() {
 
     /* Apply to global variables */
     ApplyConfigSnapshot(&snapshot);
+
+    /* Load alarm configuration (separate handling) */
+    LoadAlarmConfig();
 
     /* Write back if migration occurred or validation modified values */
     if (needsWriteBack) {

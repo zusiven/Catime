@@ -29,6 +29,9 @@
 /** @brief MRU list capacity */
 #define MAX_RECENT_FILES 5
 
+/** @brief Maximum number of alarms */
+#define MAX_ALARMS 10
+
 /* ============================================================================
  * Default configuration values
  * ============================================================================ */
@@ -84,6 +87,7 @@
 #define INI_SECTION_RECENTFILES   "RecentFiles"
 #define INI_SECTION_COLORS        "Colors"
 #define INI_SECTION_OPTIONS       "Options"
+#define INI_SECTION_ALARM         "Alarm"
 
 /* ============================================================================
  * Type definitions
@@ -151,6 +155,26 @@ typedef struct {
     int times_count;
     int loop_count;
 } PomodoroConfig;
+
+/**
+ * @brief Alarm entry (single alarm)
+ */
+typedef struct {
+    int hour;           /**< Hour (0-23) */
+    int minute;         /**< Minute (0-59) */
+    BOOL enabled;       /**< Whether alarm is active */
+    BOOL recurring;     /**< Whether alarm repeats (FALSE=one-time) */
+    char days[16];      /**< Repeat days "0,1,2,3,4,5,6" (0=Sunday), empty means daily */
+    char message[100];  /**< Alarm notification message */
+} AlarmEntry;
+
+/**
+ * @brief Alarm configuration (multiple alarms)
+ */
+typedef struct {
+    AlarmEntry alarms[MAX_ALARMS];
+    int count;
+} AlarmConfig;
 
 /**
  * @brief Notification messages
@@ -254,6 +278,7 @@ typedef struct {
 typedef struct {
     RecentFilesState recent_files;
     PomodoroConfig pomodoro;
+    AlarmConfig alarm;
     NotificationConfig notification;
     FontLicenseState font_license;
     PluginTrustState plugin_trust;

@@ -28,6 +28,8 @@
 #include "tray/tray_menu_pomodoro.h"
 #include "tray/tray_menu_font.h"
 #include "tray/tray_menu_submenus.h"
+#include "tray/tray_menu_alarm.h"
+#include "tray/tray_menu_status.h"
 #include "color/color_parser.h"
 
 /* External dependencies needed for menu display logic */
@@ -113,9 +115,14 @@ void ShowColorMenu(HWND hwnd) {
  */
 void ShowContextMenu(HWND hwnd) {
     SetCursor(LoadCursorW(NULL, IDC_ARROW));
-    
+
     HMENU hMenu = CreatePopupMenu();
-    
+
+    /* Status display at top */
+    BuildStatusMenu(hMenu);
+
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
+
     HMENU hTimerManageMenu = CreatePopupMenu();
     
     BOOL timerRunning = (!CLOCK_SHOW_CURRENT_TIME && 
@@ -165,7 +172,9 @@ void ShowContextMenu(HWND hwnd) {
 
     /* Build Pomodoro submenu using dedicated module */
     BuildPomodoroMenu(hMenu);
-    
+
+    /* Build Alarm submenu using dedicated module */
+    BuildAlarmMenu(hMenu);
 
     AppendMenuW(hMenu, MF_STRING | (CLOCK_COUNT_UP ? MF_CHECKED : MF_UNCHECKED),
                CLOCK_IDM_COUNT_UP_START,

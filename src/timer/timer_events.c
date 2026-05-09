@@ -23,6 +23,7 @@
 #include "utils/string_convert.h"
 #include "log.h"
 #include "window/window_desktop_integration.h"
+#include "alarm/alarm.h"
 
 /* External function from timer.c */
 extern int64_t GetAbsoluteTimeMs(void);
@@ -514,23 +515,26 @@ static BOOL HandleMainTimer(HWND hwnd) {
     if (!CLOCK_COUNT_UP && CLOCK_TOTAL_TIME > 0 && countdown_elapsed_time >= CLOCK_TOTAL_TIME) {
         if (!countdown_message_shown) {
             countdown_message_shown = TRUE;
-            
+
             TrayAnimation_RecomputeTimerDelay();
-            
+
             BOOL pomodoro_advanced = FALSE;
             if (IsActivePomodoroTimer()) {
                 pomodoro_advanced = HandlePomodoroCompletion(hwnd);
             } else {
                 HandleCountdownCompletion(hwnd);
             }
-            
+
             if (pomodoro_advanced) {
                 return TRUE;
             }
         }
         countdown_elapsed_time = CLOCK_TOTAL_TIME;
     }
-    
+
+    /* Check alarm triggers (once per second) */
+    CheckAlarmTriggers(hwnd);
+
     return TRUE;
 }
 

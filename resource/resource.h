@@ -459,6 +459,32 @@
 /** @brief Startup configuration control */
 #define IDC_STARTUP_TIME 1401            /**< Startup time control */
 
+/** @brief Alarm menu identifiers */
+#define CLOCK_IDM_ALARM_ADD          700     /**< Add alarm menu item */
+#define CLOCK_IDM_ALARM_CLEAR_ALL    701     /**< Clear all alarms menu item */
+#define CLOCK_IDM_ALARM_BASE         702     /**< Base ID for alarm items (702-711 for 10 alarms) */
+#define CLOCK_IDM_ALARM_END          711     /**< End ID for alarm items */
+
+/** @brief Status display menu identifier */
+#define CLOCK_IDM_STATUS_DISPLAY     720     /**< Status display menu item (grayed, info only) */
+
+/** @brief Alarm dialog identifiers */
+#define CLOCK_IDD_ALARM_DIALOG       720     /**< Alarm configuration dialog */
+#define IDC_ALARM_TIME_LABEL         721     /**< Alarm time label */
+#define IDC_ALARM_TIME_EDIT          722     /**< Alarm time edit control */
+#define IDC_ALARM_MESSAGE_LABEL      723     /**< Alarm message label */
+#define IDC_ALARM_MESSAGE_EDIT       724     /**< Alarm message edit control */
+#define IDC_ALARM_RECURRING_CHECK    725     /**< Recurring alarm checkbox */
+#define IDC_ALARM_DAYS_GROUP         726     /**< Days selection group */
+#define IDC_ALARM_DAY_SUNDAY         727     /**< Sunday checkbox */
+#define IDC_ALARM_DAY_MONDAY         728     /**< Monday checkbox */
+#define IDC_ALARM_DAY_TUESDAY        729     /**< Tuesday checkbox */
+#define IDC_ALARM_DAY_WEDNESDAY      730     /**< Wednesday checkbox */
+#define IDC_ALARM_DAY_THURSDAY       731     /**< Thursday checkbox */
+#define IDC_ALARM_DAY_FRIDAY         732     /**< Friday checkbox */
+#define IDC_ALARM_DAY_SATURDAY       733     /**< Saturday checkbox */
+#define IDC_ALARM_DAILY_CHECK        734     /**< Daily (all days) checkbox */
+
 /** @brief Error and update dialog identifiers */
 #define IDD_ERROR_DIALOG 700            /**< Error message dialog */
 #define IDC_ERROR_TEXT 701              /**< Error message text control */
