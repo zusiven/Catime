@@ -97,10 +97,10 @@ jobs:
         files: ./signed-release/catime_${{ needs.build.outputs.tag_version }}.exe
         name: ${{ github.ref_name }}
         body: |
-          # 📝 Changelog
+          ## Changes
 
-          > [!TIP]
-          > My friend, while downloading Catime, why not check out my friend's [Easy-Cat-Timer](https://github.com/xujiangjiang/Easy-Cat-Timer)— a super cute and practical countdown timer!
+          - Fixed alarm scheduling and persistence so alarms keep their times and repeat settings after edits and restarts.
+          - Preserved saved alarm details when Catime rebuilds the configuration file during an upgrade.
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
