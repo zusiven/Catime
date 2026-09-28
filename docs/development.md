@@ -63,3 +63,7 @@ build.bat Release
 GitHub Actions 工作流包含 MinGW 构建、CodeQL、Cppcheck、Gitleaks、Semgrep、MSVC 静态分析，以及 Windows AddressSanitizer smoke 运行。仓库当前没有单独的单元测试目录；CI smoke 会以 `--ci-smoke` 启动程序、按定时器退出并检查 ASan 日志，不能代替某项功能的独立验证夹具。
 
 相关配置见 [`CMakeLists.txt`](../CMakeLists.txt)、[`build.sh`](../build.sh)、[`build.bat`](../build.bat) 和 [`.github/workflows/build.yml`](../.github/workflows/build.yml)。
+
+## 稳定版发布
+
+Windows x86 稳定版通过 `v*` 标签触发构建、签名、GitHub Release 和 Winget 更新。版本修改、标签命令及发布后核验步骤见[Windows x86 稳定版发布流程](releasing.md)。
