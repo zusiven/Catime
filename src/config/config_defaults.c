@@ -389,6 +389,24 @@ static void FreeConfigEntryList(ConfigEntry* head) {
     }
 }
 
+static BOOL IsAlarmItemInSchema(const char* key) {
+    static const char* fields[] = {"TIME", "ENABLED", "RECURRING", "DAYS", "MESSAGE"};
+    char expectedKey[32];
+
+    if (!key) return FALSE;
+
+    for (int alarmIndex = 1; alarmIndex <= MAX_ALARMS; alarmIndex++) {
+        for (size_t fieldIndex = 0;
+             fieldIndex < sizeof(fields) / sizeof(fields[0]); fieldIndex++) {
+            snprintf(expectedKey, sizeof(expectedKey), "ALARM_%d_%s",
+                     alarmIndex, fields[fieldIndex]);
+            if (strcmp(key, expectedKey) == 0) return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 static BOOL IsConfigItemInMetadata(const char* section, const char* key) {
     if (!section || !key) return FALSE;
 
@@ -397,6 +415,11 @@ static BOOL IsConfigItemInMetadata(const char* section, const char* key) {
             strcmp(CONFIG_METADATA[i].key, key) == 0) {
             return TRUE;
         }
+    }
+
+    /* Alarm slots are dynamic config keys and cannot be listed in the metadata table. */
+    if (strcmp(section, INI_SECTION_ALARM) == 0 && IsAlarmItemInSchema(key)) {
+        return TRUE;
     }
 
     return FALSE;
