@@ -2,7 +2,7 @@
 
 ## 发布入口
 
-推送到 `main` 只更新源码。正式发布由 `.github/workflows/release.yml` 中的 `v*` 标签触发。推送 `v2026.09.28` 后，GitHub Actions 会构建 x86 exe、提交 SignPath 签名、创建 GitHub Release，并更新 Winget。
+推送到 `main` 只更新源码。正式发布由 `.github/workflows/release.yml` 中的 `v*` 标签触发。推送 `v2026.09.28` 后，GitHub Actions 会构建并签名 x86 exe，然后创建 GitHub Release。
 
 本仓库是 fork。首次运行工作流前，在仓库的 **Actions** 页面点击 **I understand my workflows, go ahead and enable them**。**Settings → Actions → General** 中允许使用 actions，并不等于在 fork 中启用了工作流。
 
@@ -59,7 +59,7 @@ git push origin v2026.09.28
 
 如果版本提交已经推送，`git push origin main` 会显示已是最新。只有在 `main` 的 CI 通过后才推送版本标签。
 
-标签推送后，`Release Catime` 工作流会依次构建、签名并创建 GitHub Release。Release 资产名为 `catime_2026.09.28.exe`；随后工作流提交对应版本到 Winget。无需手动上传本地 `artifacts/win32/catime.exe`。
+标签推送后，`Release Catime` 工作流会依次构建、签名并创建 GitHub Release。Release 资产名为 `catime_2026.09.28.exe`。无需手动上传本地 `artifacts/win32/catime.exe`。
 
 如果标签已推送但工作流当时未启用，不要删除或重推标签。在 **Actions → Release Catime → Run workflow** 中选择 `main`，并将 `release_tag` 填为 `v2026.09.28`。手动运行会检出该标签的源码，并在版本号与标签不一致时停止。
 
@@ -70,7 +70,6 @@ git push origin v2026.09.28
 - 标签和版本为 `v2026.09.28`。
 - 资产包含 `catime_2026.09.28.exe`，文件属性版本为 `2026.9.28.0`。
 - exe 架构为 x86（PE32 / Intel i386）。
-- Winget 更新任务成功。
 
 当前工作流的 Release 正文是 `.github/workflows/release.yml` 中的固定文本，不会从提交记录生成更新说明。需要本次变更说明时，应在打标签前更新工作流正文，或在 Release 创建后编辑正文。
 

@@ -132,14 +132,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Update Winget Package
-      uses: vedantmgoyal2009/winget-releaser@v2
-      with:
-        identifier: VladElaina.Catime
-        version: ${{ needs.build.outputs.tag_version }}
-        installers-regex: '\.exe$'
-        token: ${{ secrets.WINGET_TOKEN }}
-
   # Clean up temporary artifacts
   cleanup:
     needs: [sign, release]
