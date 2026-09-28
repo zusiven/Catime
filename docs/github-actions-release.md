@@ -6,7 +6,7 @@
 
 | 工作流 | 文件 | 用途 |
 | --- | --- | --- |
-| Catime CI | [`.github/workflows/build.yml`](../.github/workflows/build.yml) | 代码检查和 CI 构建；不创建 Release。 |
+| Catime CI | [`.github/workflows/build.yml`](../.github/workflows/build.yml) | PR、手动或每周定时运行代码检查和 CI 构建；普通 push 不触发，也不创建 Release。 |
 | Release Catime | [`.github/workflows/release.yml`](../.github/workflows/release.yml) | 构建 x86 exe 并创建 GitHub Release。 |
 
 Release Catime 不依赖 Catime CI 的构建产物，可以单独运行。发布的 exe 不做代码签名，也不会提交到 WinGet。
