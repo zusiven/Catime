@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to build (for example v2026.09.28)'
+        required: true
+        type: string
 
 # Add permissions configuration
 permissions:
@@ -15,11 +21,14 @@ jobs:
     outputs:
       version: ${{ steps.get_version.outputs.version }}
       tag_version: ${{ steps.get_version.outputs.tag_version }}
+      release_tag: ${{ steps.get_version.outputs.release_tag }}
       artifact-id: ${{ steps.upload-unsigned.outputs.artifact-id }}
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
+      with:
+        ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.release_tag) || github.ref }}
       
     - name: Set up China timezone
       run: |
@@ -35,13 +44,31 @@ jobs:
         
     - name: Extract version number
       id: get_version
+      env:
+        INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
       run: |
+        if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+          RELEASE_TAG="$INPUT_RELEASE_TAG"
+        else
+          RELEASE_TAG="${GITHUB_REF#refs/tags/}"
+        fi
+
+        if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::Expected a stable tag like v2026.09.28, got '$RELEASE_TAG'."
+          exit 1
+        fi
+
         VERSION=$(grep -oP '#define CATIME_VERSION "\K[^"]+' resource/resource.h)
+        TAG_VERSION="${RELEASE_TAG#v}"
+        if [ "$VERSION" != "$TAG_VERSION" ]; then
+          echo "::error::Tag version '$TAG_VERSION' does not match CATIME_VERSION '$VERSION'."
+          exit 1
+        fi
+
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"
-        # Get tag name without 'v' prefix
-        TAG_VERSION=${GITHUB_REF#refs/tags/v}
+        echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
         echo "TAG_VERSION=$TAG_VERSION" >> $GITHUB_ENV
         echo "tag_version=$TAG_VERSION" >> $GITHUB_OUTPUT
       
@@ -95,7 +122,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: ./signed-release/catime_${{ needs.build.outputs.tag_version }}.exe
-        name: ${{ github.ref_name }}
+        name: ${{ needs.build.outputs.release_tag }}
+        tag_name: ${{ needs.build.outputs.release_tag }}
         body: |
           ## Changes
 
