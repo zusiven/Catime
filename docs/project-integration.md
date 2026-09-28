@@ -48,6 +48,6 @@ flowchart TD
 
 当前 `features/*.md` 没有这样的逐项验证夹具，因此其中关于 Windows 和桌面行为的内容只说明源码路径，不声称已完成环境验证。
 
-## 已知的源码接线缺口
+## 闹钟调度接线
 
-闹钟模块在 [`alarm_core.c`](../src/alarm/alarm_core.c) 实现了 `CheckMissedAlarms()`，但当前源码中没有找到调用点。窗口收到系统恢复消息时会在 [`window_procedure.c`](../src/window_procedure/window_procedure.c) 调用 [`Timer_OnSystemResume()`](../src/timer/timer.c) 并重建托盘动画；该路径没有调用补发闹钟函数。详见[闹钟与通知](features/alarms-and-notifications.md)。
+主窗口创建时启动独立的 1 秒闹钟定时器；它不依赖倒计时或正计时的运行状态。窗口收到系统恢复消息时会先恢复计时状态，再调用 [`CheckMissedAlarms()`](../src/alarm/alarm_core.c)，然后重建托盘动画。常规调度与恢复补发共用本地日期/时间判断和 5 分钟补偿窗口。详见[闹钟与通知](features/alarms-and-notifications.md)。
