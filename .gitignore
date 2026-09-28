@@ -2,6 +2,9 @@
 build/*
 !build/.gitkeep
 
+# Windows build artifacts and CMake build trees
+/artifacts/
+
 *.exe
 *.out
 *.app
