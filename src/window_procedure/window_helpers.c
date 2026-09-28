@@ -24,9 +24,6 @@
 #include <winnls.h>
 #include <commdlg.h>
 
-/* Defined in config_ini.c; kept as a file-scope forward declaration until a shared header exists. */
-void InvalidateIniCache(void);
-
 extern wchar_t inputText[256];
 extern int elapsed_time;
 extern int message_shown;

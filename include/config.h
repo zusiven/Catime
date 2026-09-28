@@ -894,6 +894,11 @@ void WriteConfigScaleSteps(int normal_step, int fast_step);
 void FlushConfigToDisk(void);
 
 /**
+ * @brief Release the cached INI file so the next read reloads it from disk.
+ */
+void InvalidateIniCache(void);
+
+/**
  * @brief Release cached INI state and synchronization primitives.
  */
 void ShutdownIniCache(void);
