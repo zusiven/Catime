@@ -14,6 +14,7 @@
 #include "window_procedure/ole_drop_target.h"
 #include "log.h"
 #include "timer/timer.h"
+#include "alarm/alarm.h"
 #include "tray/tray_animation_core.h"
 #include "async_update_checker.h"
 #include "../resource/resource.h"
@@ -74,6 +75,13 @@ BOOL HandleWindowCreate(HWND hwnd) {
         LOG_WARNING("Failed to initialize high-precision timer, falling back to SetTimer");
     }
 
+    AlarmScheduler_Initialize();
+    if (SetTimer(hwnd, TIMER_ID_ALARM_SCHEDULER, 1000, NULL) == 0) {
+        LOG_ERROR("Failed to start independent alarm scheduler timer");
+    } else {
+        LOG_INFO("Independent alarm scheduler started");
+    }
+
     LOG_INFO("Window creation completed successfully");
     return TRUE;
 }
@@ -102,6 +110,7 @@ void HandleWindowDestroy(HWND hwnd) {
 
     /* Cleanup high-precision timer */
     MainTimer_Cleanup();
+    KillTimer(hwnd, TIMER_ID_ALARM_SCHEDULER);
     
     KillTimer(hwnd, TIMER_ID_TOPMOST_ENFORCE);
     KillTimer(hwnd, GetClickThroughTimerId());

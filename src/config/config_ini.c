@@ -434,23 +434,35 @@ static BOOL WriteIniToFile(IniFile* ini, const char* filePath) {
     FILE* f = OpenFileUtf8(filePath, L"wb");
     if (!f) return FALSE;
 
+    BOOL success = TRUE;
     for (IniSection* section = ini->sections; section; section = section->next) {
         /* Write section header */
-        fprintf(f, "[%s]\n", section->name);
+        if (fprintf(f, "[%s]\n", section->name) < 0) {
+            success = FALSE;
+            break;
+        }
 
         /* Write entries */
         for (IniEntry* entry = section->entries; entry; entry = entry->next) {
-            fprintf(f, "%s=%s\n", entry->key, entry->value);
+            if (fprintf(f, "%s=%s\n", entry->key, entry->value) < 0) {
+                success = FALSE;
+                break;
+            }
         }
+        if (!success) break;
 
         /* Blank line between sections */
         if (section->next) {
-            fprintf(f, "\n");
+            if (fprintf(f, "\n") < 0) {
+                success = FALSE;
+                break;
+            }
         }
     }
 
-    fclose(f);
-    return TRUE;
+    if (fflush(f) != 0 || ferror(f)) success = FALSE;
+    if (fclose(f) != 0) success = FALSE;
+    return success;
 }
 
 /**
@@ -467,6 +479,7 @@ static BOOL WriteIniAtomically(IniFile* ini) {
     }
 
     if (!WriteIniToFile(ini, tempPath)) {
+        DeleteFileUtf8(tempPath);
         return FALSE;
     }
 
@@ -534,8 +547,10 @@ static BOOL SetIniValue(const char* section, const char* key, const char* value,
 
     IniEntry* entry = FindEntry(sec, key);
     if (entry) {
+        char* newValue = StrDup(value ? value : "");
+        if (!newValue) return FALSE;
         free(entry->value);
-        entry->value = StrDup(value ? value : "");
+        entry->value = newValue;
     } else {
         entry = CreateEntry(sec, key, value);
     }
@@ -600,6 +615,9 @@ BOOL WriteIniString(const char* section, const char* key, const char* value,
     ReleaseConfigWriteLock();
     ReleaseIniLock();
 
+    if (!result) {
+        InvalidateIniCache();
+    }
     return result;
 }
 
@@ -706,6 +724,9 @@ BOOL UpdateConfigBoolAtomic(const char* section, const char* key, BOOL value) {
  */
 BOOL WriteIniMultipleAtomic(const char* filePath, const IniKeyValue* updates, size_t count) {
     if (!filePath || !updates || count == 0) return FALSE;
+    for (size_t i = 0; i < count; i++) {
+        if (!updates[i].section || !updates[i].key || !updates[i].value) return FALSE;
+    }
 
     AcquireIniLock();
     AcquireConfigWriteLock();
@@ -717,19 +738,23 @@ BOOL WriteIniMultipleAtomic(const char* filePath, const IniKeyValue* updates, si
         return FALSE;
     }
 
-    /* Apply all updates */
+    BOOL result = TRUE;
     for (size_t i = 0; i < count; i++) {
-        if (updates[i].section && updates[i].key && updates[i].value) {
-            SetIniValue(updates[i].section, updates[i].key, updates[i].value, filePath);
+        if (!SetIniValue(updates[i].section, updates[i].key, updates[i].value, filePath)) {
+            result = FALSE;
+            break;
         }
     }
 
     /* Single atomic write */
-    BOOL result = WriteIniAtomically(ini);
+    if (result) result = WriteIniAtomically(ini);
 
     ReleaseConfigWriteLock();
     ReleaseIniLock();
 
+    if (!result) {
+        InvalidateIniCache();
+    }
     return result;
 }
 

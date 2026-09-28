@@ -23,7 +23,6 @@
 #include "utils/string_convert.h"
 #include "log.h"
 #include "window/window_desktop_integration.h"
-#include "alarm/alarm.h"
 
 /* External function from timer.c */
 extern int64_t GetAbsoluteTimeMs(void);
@@ -531,9 +530,6 @@ static BOOL HandleMainTimer(HWND hwnd) {
         }
         countdown_elapsed_time = CLOCK_TOTAL_TIME;
     }
-
-    /* Check alarm triggers (once per second) */
-    CheckAlarmTriggers(hwnd);
 
     return TRUE;
 }

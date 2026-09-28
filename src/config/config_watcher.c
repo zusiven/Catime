@@ -82,7 +82,11 @@ static BOOL IsTargetFileChanged(const BYTE* buffer, DWORD bytes, const wchar_t* 
 
 static void NotifyConfigChanges(HWND hwnd) {
     if (!hwnd || !IsWindow(hwnd)) return;
-    
+
+    /* Reload only after the write debounce has elapsed. */
+    InvalidateIniCache();
+    PostMessage(hwnd, WM_APP_ALARM_CHANGED, 0, 0);
+
     static const UINT configChangeMessages[] = {
         WM_APP_ANIM_SPEED_CHANGED,
         WM_APP_ANIM_PATH_CHANGED,

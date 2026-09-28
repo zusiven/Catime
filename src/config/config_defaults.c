@@ -83,7 +83,7 @@ static const ConfigItemMeta CONFIG_METADATA[] = {
     {INI_SECTION_POMODORO, "POMODORO_LOOP_COUNT", "1", CONFIG_TYPE_INT, CFG_OFFSET(pomodoroLoopCount), CFG_NO_SIZE, "Cycles before long break"},
 
     /* Alarm settings */
-    {INI_SECTION_ALARM, "ALARM_COUNT", "0", CONFIG_TYPE_INT, CFG_OFFSET(alarmCount), CFG_NO_SIZE, "Number of active alarms"},
+    {INI_SECTION_ALARM, "ALARM_COUNT", "0", CONFIG_TYPE_INT, CFG_OFFSET(alarmCount), CFG_NO_SIZE, "Number of configured alarms"},
     
     /* Notification settings */
     {INI_SECTION_NOTIFICATION, "CLOCK_TIMEOUT_MESSAGE_TEXT", DEFAULT_TIMEOUT_MESSAGE, CONFIG_TYPE_STRING, CFG_OFFSET(timeoutMessage), CFG_SIZE(timeoutMessage), "Timeout message"},

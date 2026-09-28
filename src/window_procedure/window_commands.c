@@ -4,6 +4,7 @@
  */
 
 #include "window_procedure/window_commands.h"
+#include "dialog/dialog_alarm.h"
 #include "window_procedure/window_utils.h"
 #include "window_procedure/window_helpers.h"
 #include "window_procedure/window_hotkeys.h"
@@ -472,14 +473,24 @@ static LRESULT CmdAlarmAdd(HWND hwnd, WPARAM wp, LPARAM lp) {
 
 static LRESULT CmdAlarmClearAll(HWND hwnd, WPARAM wp, LPARAM lp) {
     (void)wp; (void)lp;
-    ClearAllAlarms();
+    if (!ClearAllAlarms()) {
+        MessageBoxW(hwnd,
+                    GetLocalizedString(L"保存闹钟失败，请检查配置文件权限或磁盘空间。", L"Could not save alarm settings. Check file permissions and disk space."),
+                    GetLocalizedString(L"错误", L"Error"),
+                    MB_OK | MB_ICONERROR);
+    }
     return 0;
 }
 
 static BOOL HandleAlarmToggle(HWND hwnd, UINT cmd, int index) {
     (void)cmd;
     if (index >= 0 && index < g_AppConfig.alarm.count) {
-        ToggleAlarm(index);
+        if (!ToggleAlarm(index, NULL)) {
+            MessageBoxW(hwnd,
+                        GetLocalizedString(L"保存闹钟失败，请检查配置文件权限或磁盘空间。", L"Could not save alarm settings. Check file permissions and disk space."),
+                        GetLocalizedString(L"错误", L"Error"),
+                        MB_OK | MB_ICONERROR);
+        }
     }
     return TRUE;
 }
@@ -629,6 +640,31 @@ typedef struct {
 
 BOOL DispatchRangeCommand(HWND hwnd, UINT cmd, WPARAM wp, LPARAM lp) {
     (void)wp; (void)lp;
+
+    if (cmd >= CLOCK_IDM_ALARM_EDIT_BASE &&
+        cmd < CLOCK_IDM_ALARM_EDIT_BASE + MAX_ALARMS) {
+        int index = (int)(cmd - CLOCK_IDM_ALARM_EDIT_BASE);
+        if (index < g_AppConfig.alarm.count) {
+            ShowAlarmDialog(hwnd, index);
+        }
+        return TRUE;
+    }
+    if (cmd >= CLOCK_IDM_ALARM_DELETE_BASE &&
+        cmd < CLOCK_IDM_ALARM_DELETE_BASE + MAX_ALARMS) {
+        int index = (int)(cmd - CLOCK_IDM_ALARM_DELETE_BASE);
+        if (index < g_AppConfig.alarm.count &&
+            MessageBoxW(hwnd,
+                        GetLocalizedString(L"删除这个闹钟？", L"Delete this alarm?"),
+                        GetLocalizedString(L"闹钟", L"Alarm"),
+                        MB_YESNO | MB_ICONQUESTION) == IDYES &&
+            !RemoveAlarm(index)) {
+            MessageBoxW(hwnd,
+                        GetLocalizedString(L"删除闹钟失败，请检查配置文件权限或磁盘空间。", L"Could not delete the alarm. Check file permissions and disk space."),
+                        GetLocalizedString(L"错误", L"Error"),
+                        MB_OK | MB_ICONERROR);
+        }
+        return TRUE;
+    }
 
     /* Handle animation commands first */
     if (HandleAnimationMenuCommand(hwnd, cmd)) return TRUE;

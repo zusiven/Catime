@@ -44,10 +44,25 @@ void BuildAlarmMenu(HMENU hMenu) {
                         statusMark,
                         messageW[0] ? messageW : GetLocalizedString(L"闹钟", L"Alarm"));
 
-            UINT flags = MF_STRING;
-            if (alarm->enabled) flags |= MF_CHECKED;
+            HMENU hEntryMenu = CreatePopupMenu();
+            if (!hEntryMenu) {
+                UINT flags = MF_STRING | (alarm->enabled ? MF_CHECKED : 0);
+                AppendMenuW(hAlarmMenu, flags, CLOCK_IDM_ALARM_BASE + i, itemText);
+                continue;
+            }
 
-            AppendMenuW(hAlarmMenu, flags, CLOCK_IDM_ALARM_BASE + i, itemText);
+            AppendMenuW(hEntryMenu, MF_STRING | (alarm->enabled ? MF_CHECKED : 0),
+                        CLOCK_IDM_ALARM_BASE + i,
+                        alarm->enabled
+                            ? GetLocalizedString(L"停用", L"Disable")
+                            : GetLocalizedString(L"启用", L"Enable"));
+            AppendMenuW(hEntryMenu, MF_STRING,
+                        CLOCK_IDM_ALARM_EDIT_BASE + i,
+                        GetLocalizedString(L"编辑…", L"Edit…"));
+            AppendMenuW(hEntryMenu, MF_STRING,
+                        CLOCK_IDM_ALARM_DELETE_BASE + i,
+                        GetLocalizedString(L"删除", L"Delete"));
+            AppendMenuW(hAlarmMenu, MF_POPUP, (UINT_PTR)hEntryMenu, itemText);
         }
 
         AppendMenuW(hAlarmMenu, MF_SEPARATOR, 0, NULL);

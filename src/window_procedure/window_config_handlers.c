@@ -16,6 +16,7 @@
 #include "color/color.h"
 #include "color/color_parser.h"
 #include "tray/tray_animation_core.h"
+#include "alarm/alarm.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -374,6 +375,12 @@ LRESULT HandleAppColorsChanged(HWND hwnd) {
     ReadPercentIconColorsConfig();
     TrayAnimation_UpdatePercentIconIfNeeded();
 
+    InvalidateRect(hwnd, NULL, TRUE);
+    return 0;
+}
+
+LRESULT HandleAppAlarmChanged(HWND hwnd) {
+    LoadAlarmConfig();
     InvalidateRect(hwnd, NULL, TRUE);
     return 0;
 }

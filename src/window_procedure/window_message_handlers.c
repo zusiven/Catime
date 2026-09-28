@@ -10,6 +10,7 @@
 #include "window_procedure/window_menus.h"
 #include "timer/timer_events.h"
 #include "timer/main_timer.h"
+#include "alarm/alarm.h"
 #include "tray/tray_events.h"
 #include "tray/tray_animation_core.h"
 #include "config/config_watcher.h"
@@ -149,6 +150,10 @@ extern BOOL g_IsTransitioning;
 
 LRESULT HandleTimer(HWND hwnd, WPARAM wp, LPARAM lp) {
     (void)lp;
+    if (wp == TIMER_ID_ALARM_SCHEDULER) {
+        CheckAlarmTriggers(hwnd);
+        return 0;
+    }
     if (wp == TIMER_ID_TRANSITION_END) {
         KillTimer(hwnd, TIMER_ID_TRANSITION_END);
         g_IsTransitioning = FALSE;

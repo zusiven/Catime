@@ -19,37 +19,47 @@
  * @brief Check all alarms and trigger notifications
  * @param hwnd Window handle for notifications
  *
- * @details Called every second from HandleMainTimer.
- *          Checks current time against all enabled alarms.
+ * @details Called by the independent wall-clock alarm timer.
+ *          Checks enabled alarms and catches up occurrences delayed by up to five minutes.
  */
 void CheckAlarmTriggers(HWND hwnd);
 
 /**
- * @brief Handle single alarm trigger
- * @param hwnd Window handle
- * @param index Alarm index in g_AppConfig.alarm.alarms[]
- *
- * @details Shows notification, plays sound, disables one-time alarms.
+ * @brief Initialize the scheduler's last-check timestamp.
  */
-void HandleAlarmTrigger(HWND hwnd, int index);
+void AlarmScheduler_Initialize(void);
 
 /**
- * @brief Check if alarm should trigger today
- * @param alarm Pointer to AlarmEntry
- * @return TRUE if alarm should trigger, FALSE otherwise
- *
- * @details Checks recurring days against current day of week.
+ * @brief Check for missed alarms after system resume.
+ */
+void CheckMissedAlarms(HWND hwnd);
+
+/**
+ * @brief Parse a comma-separated weekday list. An empty string means every day.
+ */
+BOOL ParseAlarmDays(const char* days, unsigned* dayMask);
+
+/**
+ * @brief Check whether an alarm is scheduled for today's local date.
  */
 BOOL ShouldTriggerToday(const AlarmEntry* alarm);
 
 /**
- * @brief Check for missed alarms after system resume
- * @param hwnd Window handle
- *
- * @details Called from Timer_OnSystemResume.
- *          Shows notifications for alarms missed during sleep.
+ * @brief Check if an alarm is scheduled on a supplied local calendar date.
  */
-void CheckMissedAlarms(HWND hwnd);
+BOOL ShouldTriggerOnDate(const AlarmEntry* alarm, const SYSTEMTIME* date);
+
+/**
+ * @brief Find the next future occurrence of an alarm.
+ * @param now Current local time
+ * @param occurrence Receives the next local date and time
+ * @param minutesUntil Receives the ceiling number of minutes remaining
+ */
+BOOL GetNextAlarmOccurrence(const AlarmEntry* alarm, const SYSTEMTIME* now,
+                            SYSTEMTIME* occurrence, int* minutesUntil);
+
+/** Return code from AddAlarm when persistence fails. */
+#define ALARM_ADD_SAVE_FAILED (-2)
 
 /**
  * @brief Add new alarm to configuration
@@ -58,14 +68,14 @@ void CheckMissedAlarms(HWND hwnd);
  * @param message Alarm message (UTF-8)
  * @param recurring TRUE for repeat, FALSE for one-time
  * @param days Comma-separated days "0,1,2,3,4,5,6" or empty for daily
- * @return Index of new alarm, or -1 if full
+ * @return Index of new alarm, -1 for invalid/full input, or ALARM_ADD_SAVE_FAILED
  */
 int AddAlarm(int hour, int minute, const char* message, BOOL recurring, const char* days);
 
 /**
  * @brief Remove alarm from configuration
  * @param index Alarm index to remove
- * @return TRUE on success, FALSE on invalid index
+ * @return TRUE on success, FALSE on invalid index or persistence failure
  */
 BOOL RemoveAlarm(int index);
 
@@ -78,31 +88,34 @@ BOOL RemoveAlarm(int index);
  * @param recurring New recurring flag
  * @param days New days string
  * @param enabled New enabled flag
- * @return TRUE on success, FALSE on invalid index
+ * @return TRUE on success, FALSE on invalid input or persistence failure
  */
 BOOL UpdateAlarm(int index, int hour, int minute, const char* message, BOOL recurring, const char* days, BOOL enabled);
 
 /**
  * @brief Toggle alarm enabled state
  * @param index Alarm index
- * @return New enabled state, or FALSE on invalid index
+ * @param enabledAfterToggle Optional output for the new enabled state
+ * @return TRUE on success, FALSE on invalid index or persistence failure
  */
-BOOL ToggleAlarm(int index);
+BOOL ToggleAlarm(int index, BOOL* enabledAfterToggle);
 
 /**
  * @brief Clear all alarms
+ * @return TRUE on success, FALSE on persistence failure
  */
-void ClearAllAlarms(void);
+BOOL ClearAllAlarms(void);
 
 /**
- * @brief Save alarm configuration to INI
+ * @brief Save the complete alarm configuration as one atomic INI update
+ * @return TRUE on success, FALSE on invalid state or persistence failure
  */
-void SaveAlarmConfig(void);
+BOOL SaveAlarmConfig(void);
 
 /**
  * @brief Load alarm configuration from INI
  *
- * @details Called during ReadConfig initialization.
+ * @details Called during ReadConfig initialization and after external config changes.
  */
 void LoadAlarmConfig(void);
 

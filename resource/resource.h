@@ -72,6 +72,7 @@
 #define TIMER_ID_CONFIG_SAVE 1005            /**< Config save debounce timer */
 #define TIMER_ID_FONT_VALIDATION 1006        /**< Font validation timer (every 2s) */
 #define TIMER_ID_VOLUME_PREVIEW 1007         /**< Volume preview auto-stop timer (3s limit) */
+#define TIMER_ID_ALARM_SCHEDULER 1008        /**< Independent wall-clock alarm scheduler */
 #define TIMER_ID_EDIT_MODE_REFRESH 2001      /**< Edit mode refresh timer */
 #define TIMER_ID_RENDER_ANIMATION 2002       /**< Dedicated animation render timer (30-60 FPS) */
 #define TIMER_ID_TOPMOST_ENFORCE 2003        /**< Fast topmost enforcement when near taskbar (50ms) */
@@ -464,6 +465,8 @@
 #define CLOCK_IDM_ALARM_CLEAR_ALL    701     /**< Clear all alarms menu item */
 #define CLOCK_IDM_ALARM_BASE         702     /**< Base ID for alarm items (702-711 for 10 alarms) */
 #define CLOCK_IDM_ALARM_END          711     /**< End ID for alarm items */
+#define CLOCK_IDM_ALARM_EDIT_BASE    40000   /**< Edit commands for alarm items (10 entries) */
+#define CLOCK_IDM_ALARM_DELETE_BASE  40010   /**< Delete commands for alarm items (10 entries) */
 
 /** @brief Status display menu identifier */
 #define CLOCK_IDM_STATUS_DISPLAY     720     /**< Status display menu item (grayed, info only) */

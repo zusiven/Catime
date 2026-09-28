@@ -12,6 +12,7 @@
 #include "tray/tray_events.h"
 #include "tray/tray_animation_core.h"
 #include "tray/tray.h"
+#include "alarm/alarm.h"
 #include "config.h"
 #include "timer/timer.h"
 #include "timer/timer_events.h"
@@ -66,6 +67,7 @@ static LRESULT HandlePowerBroadcast(HWND hwnd, WPARAM wp, LPARAM lp) {
         }
 
         Timer_OnSystemResume();
+        CheckMissedAlarms(hwnd);
 
         LOG_INFO("System resumed from sleep/hibernate, reinitializing tray icon animation");
 
@@ -104,6 +106,7 @@ static const AppMessageDispatchEntry APP_MESSAGE_DISPATCH_TABLE[] = {
     {WM_APP_HOTKEYS_CHANGED, HandleAppHotkeysChanged},
     {WM_APP_RECENTFILES_CHANGED, HandleAppRecentFilesChanged},
     {WM_APP_COLORS_CHANGED, HandleAppColorsChanged},
+    {WM_APP_ALARM_CHANGED, HandleAppAlarmChanged},
     {WM_APP_ANIM_SPEED_CHANGED, HandleAppAnimSpeedChanged},
     {WM_APP_ANIM_PATH_CHANGED, HandleAppAnimPathChanged},
     {0,                             NULL}
@@ -451,4 +454,3 @@ void ToggleWindowVisibility(HWND hwnd) {
         SetForegroundWindow(hwnd);
     }
 }
-

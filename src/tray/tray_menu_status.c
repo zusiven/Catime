@@ -51,25 +51,16 @@ static void GetNextAlarmInfo(wchar_t* buffer, size_t size) {
     /* Find next enabled alarm */
     SYSTEMTIME st;
     GetLocalTime(&st);
-    int currentMinuteTotal = (int)st.wHour * 60 + (int)st.wMinute;
-
     int nextAlarmIdx = -1;
-    int minDiff = 24 * 60;  /* Max 24 hours */
+    int minDiff = 8 * 24 * 60;
 
     for (int i = 0; i < g_AppConfig.alarm.count; i++) {
         AlarmEntry* alarm = &g_AppConfig.alarm.alarms[i];
         if (!alarm->enabled) continue;
 
-        int alarmMinuteTotal = alarm->hour * 60 + alarm->minute;
-
-        /* Calculate difference */
+        SYSTEMTIME occurrence;
         int diff;
-        if (alarmMinuteTotal > currentMinuteTotal) {
-            diff = alarmMinuteTotal - currentMinuteTotal;
-        } else {
-            /* Tomorrow */
-            diff = (24 * 60 - currentMinuteTotal) + alarmMinuteTotal;
-        }
+        if (!GetNextAlarmOccurrence(alarm, &st, &occurrence, &diff)) continue;
 
         if (diff < minDiff) {
             minDiff = diff;

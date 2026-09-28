@@ -48,6 +48,11 @@ LRESULT HandleAppRecentFilesChanged(HWND hwnd);
 LRESULT HandleAppColorsChanged(HWND hwnd);
 
 /**
+ * @brief Handle WM_APP_ALARM_CHANGED
+ */
+LRESULT HandleAppAlarmChanged(HWND hwnd);
+
+/**
  * @brief Handle WM_APP_ANIM_SPEED_CHANGED
  */
 LRESULT HandleAppAnimSpeedChanged(HWND hwnd);
