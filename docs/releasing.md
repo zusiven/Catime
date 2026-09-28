@@ -4,6 +4,8 @@
 
 推送到 `main` 只更新源码。正式发布由 `.github/workflows/release.yml` 中的 `v*` 标签触发。推送 `v2026.09.28` 后，GitHub Actions 会构建 x86 exe 并创建 GitHub Release。发布的 exe 不做代码签名。
 
+工作流触发方式、手动重跑规则和构建产物流转见 [GitHub Actions 发布工作流](github-actions-release.md)。
+
 本仓库是 fork。首次运行工作流前，在仓库的 **Actions** 页面点击 **I understand my workflows, go ahead and enable them**。**Settings → Actions → General** 中允许使用 actions，并不等于在 fork 中启用了工作流。
 
 当前工作流调用 `build.sh`，使用 i686 MinGW 编译器；发布资产只有 x86 exe。

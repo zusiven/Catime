@@ -20,6 +20,7 @@
 
 - [开发与构建](development.md)：源码目录、启动和消息分发流程、构建命令、CI 检查。
 - [Windows x86 稳定版发布](releasing.md)：日期版本号、标签触发、GitHub Release 和 exe 核验。
+- [GitHub Actions 发布工作流](github-actions-release.md)：工作流触发、版本校验、构建产物流转、凭据和常见故障处理。
 
 ## 阅读约定
 
