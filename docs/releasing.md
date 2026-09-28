@@ -2,7 +2,7 @@
 
 ## 发布入口
 
-推送到 `main` 只更新源码。正式发布由 `.github/workflows/release.yml` 中的 `v*` 标签触发。推送 `v2026.09.28` 后，GitHub Actions 会构建并签名 x86 exe，然后创建 GitHub Release。
+推送到 `main` 只更新源码。正式发布由 `.github/workflows/release.yml` 中的 `v*` 标签触发。推送 `v2026.09.28` 后，GitHub Actions 会构建 x86 exe 并创建 GitHub Release。发布的 exe 不做代码签名。
 
 本仓库是 fork。首次运行工作流前，在仓库的 **Actions** 页面点击 **I understand my workflows, go ahead and enable them**。**Settings → Actions → General** 中允许使用 actions，并不等于在 fork 中启用了工作流。
 
@@ -20,7 +20,7 @@
 #define CATIME_VERSION_BUILD 0
 ```
 
-应用内版本字符串不带 `v`；Git 标签带 `v`。`resource/catime.rc` 使用这些宏生成 exe 文件属性。工作流分别读取头文件版本和标签版本，不会检查两者是否一致，因此发布前需要人工核对。
+应用内版本字符串不带 `v`；Git 标签带 `v`。`resource/catime.rc` 使用这些宏生成 exe 文件属性。工作流会核对头文件版本和标签版本，不一致时停止发布。
 
 `CATIME_VERSION` 也作为配置文件的 `CONFIG_VERSION`。版本不匹配时，程序会进入 `MigrateConfig`：重建配置文件并恢复当前元数据中仍受支持的设置键，也会保留闹钟槽位的时间、启用状态、重复规则、日期和消息。应用内更新检查会去掉 Release 标签的 `v` 前缀，并按三段数字比较版本。
 
@@ -59,13 +59,13 @@ git push origin v2026.09.28
 
 如果版本提交已经推送，`git push origin main` 会显示已是最新。只有在 `main` 的 CI 通过后才推送版本标签。
 
-标签推送后，`Release Catime` 工作流会依次构建、签名并创建 GitHub Release。Release 资产名为 `catime_2026.09.28.exe`。无需手动上传本地 `artifacts/win32/catime.exe`。
+标签推送后，`Release Catime` 工作流会构建并创建 GitHub Release。Release 资产名为 `catime_2026.09.28.exe`。无需手动上传本地 `artifacts/win32/catime.exe`。
 
 如果标签已推送但工作流当时未启用，不要删除或重推标签。在 **Actions → Release Catime → Run workflow** 中选择 `main`，并将 `release_tag` 填为 `v2026.09.28`。手动运行会检出该标签的源码，并在版本号与标签不一致时停止。
 
 ## 发布结果检查
 
-在 GitHub Actions 中确认 `Release Catime` 的构建、签名和发布任务均成功。再检查 GitHub Release：
+在 GitHub Actions 中确认 `Release Catime` 的构建和发布任务均成功。再检查 GitHub Release：
 
 - 标签和版本为 `v2026.09.28`。
 - 资产包含 `catime_2026.09.28.exe`，文件属性版本为 `2026.9.28.0`。

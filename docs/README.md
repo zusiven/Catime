@@ -19,7 +19,7 @@
 ## 开发文档
 
 - [开发与构建](development.md)：源码目录、启动和消息分发流程、构建命令、CI 检查。
-- [Windows x86 稳定版发布](releasing.md)：日期版本号、标签触发、签名、GitHub Release 和 Winget 核验。
+- [Windows x86 稳定版发布](releasing.md)：日期版本号、标签触发、GitHub Release 和 exe 核验。
 
 ## 阅读约定
 

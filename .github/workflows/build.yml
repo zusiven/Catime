@@ -662,7 +662,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.version }}
-      artifact-id: ${{ steps.upload-unsigned.outputs.artifact-id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -692,33 +691,7 @@ jobs:
           mv output/catime.exe output/catime_${{ env.VERSION }}_${{ github.run_number }}.exe
 
       - name: Upload build artifacts
-        id: upload-unsigned
         uses: actions/upload-artifact@v7
         with:
           name: catime-windows-${{ env.VERSION }}-${{ github.run_number }}
           path: output/catime_${{ env.VERSION }}_${{ github.run_number }}.exe
-
-  sign:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
-    uses: ./.github/workflows/signpath-sign.yml
-    with:
-      artifact-name: catime-windows-${{ needs.build.outputs.version }}-${{ github.run_number }}
-      artifact-id: ${{ needs.build.outputs.artifact-id }}
-      version: ${{ needs.build.outputs.version }}
-      is-release: false
-    secrets:
-      SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
-
-  cleanup:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: sign
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - name: Delete temporary signing package
-        uses: geekyeggo/delete-artifact@v6
-        with:
-          name: catime-signing-package
-          failOnError: false

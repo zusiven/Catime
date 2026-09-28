@@ -66,4 +66,4 @@ GitHub Actions 工作流包含 MinGW 构建、CodeQL、Cppcheck、Gitleaks、Sem
 
 ## 稳定版发布
 
-Windows x86 稳定版通过 `v*` 标签触发构建、签名、GitHub Release 和 Winget 更新。版本修改、标签命令及发布后核验步骤见[Windows x86 稳定版发布流程](releasing.md)。
+Windows x86 稳定版通过 `v*` 标签触发构建并创建 GitHub Release，发布的 exe 不做代码签名。版本修改、标签命令及发布后核验步骤见[Windows x86 稳定版发布流程](releasing.md)。
