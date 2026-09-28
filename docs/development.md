@@ -58,11 +58,11 @@ build.bat Release
 
 脚本会在仓库的 `build/` 目录中配置并构建。CMake 项目本身也包含 MSVC 编译选项；需要调整工具链时可直接使用 CMake 配置项目。
 
-## CI 检查
+## GitHub Actions
 
-GitHub Actions 工作流包含 MinGW 构建、CodeQL、Cppcheck、Gitleaks、Semgrep、MSVC 静态分析，以及 Windows AddressSanitizer smoke 运行。仓库当前没有单独的单元测试目录；CI smoke 会以 `--ci-smoke` 启动程序、按定时器退出并检查 ASan 日志，不能代替某项功能的独立验证夹具。
+`Catime CI` 已停用，其历史配置保存在 [`.github/workflows/build.yml.old`](../.github/workflows/build.yml.old)。GitHub Actions 不会运行 `.old` 文件。当前保留的 [Release Catime](../.github/workflows/release.yml) 工作流用于构建并发布 Windows x86 exe。
 
-相关配置见 [`CMakeLists.txt`](../CMakeLists.txt)、[`build.sh`](../build.sh)、[`build.bat`](../build.bat) 和 [`.github/workflows/build.yml`](../.github/workflows/build.yml)。
+本地构建配置见 [`CMakeLists.txt`](../CMakeLists.txt)、[`build.sh`](../build.sh) 和 [`build.bat`](../build.bat)。
 
 ## 稳定版发布
 

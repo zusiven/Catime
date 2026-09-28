@@ -28,7 +28,7 @@
 
 ## 发布前检查
 
-1. 确认目标代码和版本修改已提交到 `main` 并推送；等待该提交的 `Catime CI` 检查通过。推送 `main` 本身不会创建 Release。
+1. 确认目标代码和版本修改已提交到 `main` 并推送。推送 `main` 本身不会创建 Release；Release 由 `v*` 标签触发，也可按[工作流文档](github-actions-release.md)手动运行。
 2. 确认远端尚无同名标签：
 
    ```bash
